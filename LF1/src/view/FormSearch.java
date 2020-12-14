@@ -38,20 +38,22 @@ public class FormSearch extends javax.swing.JInternalFrame {
     }
     
     private void init1(){
-        List<State> states = ct.getStatesAlcanded();
+        List<State> states = ct.getStatesAlcanced();
         for(State state:states){
+
             listModel1.addElement(state.getName());
         }
     }
     private void init2(){
-        List<State> states = ct.getStates();
+        List<State> states = ct.getStatesUnreachable();
         for(State state:states){
             listModel2.addElement(state.getName());
         }
     }
     private void init3(){
-        List<State> states = ct.getDeathStates();
+        List<State> states = ct.getStatesDead();
         for(State state:states){
+           
             listModel3.addElement(state.getName());
         }
     }
@@ -177,7 +179,11 @@ public class FormSearch extends javax.swing.JInternalFrame {
         listModel2.clear();
         listModel3.clear();
         String [] word= jTextConsult.getText().split(",");
+        
         if(ct.transition(word)){
+            ct.statesAlcanced();  
+            ct.statesDead();
+            
             int chouce = JOptionPane.showConfirmDialog(null, "Deseja continuar com a normalização?", "Palavra aceita", WIDTH);
             if(chouce == 0){
                init1();

@@ -19,52 +19,92 @@ public class ControllerTransitions {
     private State stateInitial;
     private List<State> statesFinals;
     private List<State> statesAlcanced;
-    private List<State> statesDeath;
+    private List<State> statesDead;
+    private List<State> statesUnreachable;
     public ControllerTransitions() {
         states = new ArrayList<>();
         alphabet = new ArrayList<>();
         statesFinals = new ArrayList<>();
         statesAlcanced = new ArrayList<>();
-        statesDeath = new ArrayList<>();
+        statesDead = new ArrayList<>();
+        statesUnreachable = new ArrayList<>();
+        
+        
     }
     public boolean transition(String[] word) {
         initStateInitial();
         initStatesFinals();
+        
         State currentState = stateInitial;
         statesAlcanced.add(currentState);
-        states.remove(currentState);
-
+        
+        
         for (int i = 0; i < word.length; i++) {
             if (alphabet.contains(word[i])) {
                     if (currentState.getTransition().get(word[i]) != null) {                       
                         currentState = currentState.getTransition().get(word[i]);
-                        states.remove(currentState);
-                        if(!statesAlcanced.contains(currentState)){
-                            System.out.println("current "+currentState);
-                            statesAlcanced.add(currentState);
-                        }
+                       
                     } else {
                         return false;
                     }
             } else {
                 return false;
-
             }
         }
-      
         if (statesFinals.contains(currentState)) {
-
             return true;
         } else {
             return false;
         }
 
     }
-    public List<State> getStatesAlcanded(){
-        return statesAlcanced;
+   
+    public void statesAlcanced(){
+        initStateInitial();
+        initStatesFinals();
+        initUnreachable();
+        statesUnreachable.remove(stateInitial);
+        for(State state : states){
+            for(String s : alphabet){
+                if(state.getTransition().get(s) != null){
+                    State nextState = state.getTransition().get(s);
+                    if(!statesAlcanced.contains(nextState)){
+                        statesAlcanced.add(nextState);
+                        statesUnreachable.remove(nextState);
+                    }
+                }
+            }
+        }
     }
-    public List<State> getDeathStates(){
-        return statesDeath;
+    
+    public void statesDead(){
+        initDead();
+        statesDead.remove(stateInitial);
+        for(State state : states){
+            
+            for(String s : alphabet){
+                
+                if(state.getTransition().get(s) != null && state.getTransition().get(s) != state ){
+                    statesDead.remove(state);
+                    
+                }
+            }
+        }
+        for(State state: statesUnreachable){
+            statesDead.remove(state);
+        }
+    }
+    
+    
+    private void initUnreachable(){
+        for(State state : states){
+            statesUnreachable.add(state);
+        }
+    }
+    private void initDead(){
+        for(State state : states){
+            statesDead.add(state);
+        }
     }
 
     private void initStateInitial() {
@@ -98,5 +138,47 @@ public class ControllerTransitions {
     public void setAlphabet(List<String> alphabet) {
         this.alphabet = alphabet;
     }
+
+    public State getStateInitial() {
+        return stateInitial;
+    }
+
+    public void setStateInitial(State stateInitial) {
+        this.stateInitial = stateInitial;
+    }
+
+    public List<State> getStatesFinals() {
+        return statesFinals;
+    }
+
+    public void setStatesFinals(List<State> statesFinals) {
+        this.statesFinals = statesFinals;
+    }
+
+    public List<State> getStatesAlcanced() {
+        return statesAlcanced;
+    }
+
+    public void setStatesAlcanced(List<State> statesAlcanced) {
+        this.statesAlcanced = statesAlcanced;
+    }
+
+    public List<State> getStatesDead() {
+        return statesDead;
+    }
+
+    public void setStatesDead(List<State> statesDead) {
+        this.statesDead = statesDead;
+    }
+
+    public List<State> getStatesUnreachable() {
+        return statesUnreachable;
+    }
+
+    public void setStatesUnreachable(List<State> statesUnreachable) {
+        this.statesUnreachable = statesUnreachable;
+    }
+
+    
 
 }
